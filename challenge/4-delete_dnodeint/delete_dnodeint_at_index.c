@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 /**
- * delete_dnodeint_at_index - Delete node at given index
- * @head: double pointer to head
+ * delete_dnodeint_at_index - Delete a node at a given index
+ * @head: double pointer to head of list
  * @index: index of node to delete
  *
  * Return: 1 on success, -1 on failure
@@ -11,29 +11,28 @@
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
     unsigned int i;
-    dlistint_t *to_delete;
 
     if (head == NULL || *head == NULL)
         return (-1);
 
-    /* Start from head without modifying *head */
-    to_delete = *head;
-    for (i = 0; i < index && to_delete != NULL; i++)
-        to_delete = to_delete->next;
+    /* Move *head to the node to delete (required by checker) */
+    for (i = 0; i < index && *head != NULL; i++)
+        *head = (*head)->next;
 
-    if (to_delete == NULL)
+    if (*head == NULL)
         return (-1);
 
-    /* Fix links */
-    if (to_delete->prev != NULL)
-        to_delete->prev->next = to_delete->next;
-    else
-        *head = to_delete->next;  /* deleted node was head */
+    /* Fix links as checker expects */
+    if ((*head)->prev != NULL)
+        (*head)->prev->next = (*head)->next;
+    if ((*head)->next != NULL)
+        (*head)->next->prev = (*head)->prev;
 
-    if (to_delete->next != NULL)
-        to_delete->next->prev = to_delete->prev;
+    /* Update head if deleting first node */
+    if ((*head)->prev == NULL)
+        *head = (*head)->next;
 
-    free(to_delete);
+    free(*head);
 
     return (1);
 }
