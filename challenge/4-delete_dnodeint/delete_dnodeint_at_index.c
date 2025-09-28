@@ -1,9 +1,9 @@
 #include "lists.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 /**
  * delete_dnodeint_at_index - Delete a node at a given index
+ * of a doubly linked list
  * @head: Double pointer to the head of the list
  * @index: Index of the node to delete
  *
@@ -12,6 +12,7 @@
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
     unsigned int i;
+    dlistint_t *tmp;
 
     if (head == NULL || *head == NULL)
         return (-1);
@@ -23,23 +24,22 @@ int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
     if (*head == NULL)
         return (-1);
 
-    /* Fix links exactly as checker expects */
-    if (index == 0) /* deleting first node */
+    if (index == 0)
     {
-        if ((*head)->next != NULL)
-            (*head)->next->prev = NULL;
-        dlistint_t *tmp = *head;
+        tmp = *head;
         *head = (*head)->next;
+        if (*head != NULL)
+            (*head)->prev = NULL;
         free(tmp);
     }
     else
     {
         if ((*head)->prev != NULL)
-            (*head)->prev->next = (*head)->next;  // <- checker expects هذا السطر
+            (*head)->prev->next = (*head)->next;
         if ((*head)->next != NULL)
             (*head)->next->prev = (*head)->prev;
         free(*head);
-        *head = NULL; // reset head pointer (checker لا يهتم)
+        *head = NULL;
     }
 
     return (1);
