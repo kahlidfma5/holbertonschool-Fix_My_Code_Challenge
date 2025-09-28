@@ -11,28 +11,29 @@
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
     unsigned int i;
+    dlistint_t *to_delete;
 
     if (head == NULL || *head == NULL)
         return (-1);
 
-    /* Traverse list using *head directly (required by checker) */
-    for (i = 0; i < index && *head != NULL; i++)
-        *head = (*head)->next;
+    /* Start from head without modifying *head */
+    to_delete = *head;
+    for (i = 0; i < index && to_delete != NULL; i++)
+        to_delete = to_delete->next;
 
-    if (*head == NULL)
+    if (to_delete == NULL)
         return (-1);
 
-    /* Fix links exactly as checker expects */
-    if ((*head)->prev != NULL)
-        (*head)->prev->next = (*head)->next;
-    if ((*head)->next != NULL)
-        (*head)->next->prev = (*head)->prev;
+    /* Fix links */
+    if (to_delete->prev != NULL)
+        to_delete->prev->next = to_delete->next;
+    else
+        *head = to_delete->next;  /* deleted node was head */
 
-    /* If deleting head node, move head pointer */
-    if ((*head)->prev == NULL)
-        *head = (*head)->next;
+    if (to_delete->next != NULL)
+        to_delete->next->prev = to_delete->prev;
 
-    free(*head);
+    free(to_delete);
 
     return (1);
 }
